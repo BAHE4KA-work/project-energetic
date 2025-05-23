@@ -23,12 +23,12 @@ class FilterInput(base):
 
 
 class ClientCard(base):
-    address: str # 0
+    address: str
 
-    avg_cons: float # 1
+    avg_cons: float
     level: Optional[int] = None # 4
-    deviation: float # 3
-    times_checked: int # 0
-    filling_coef: float # 2
+    deviation: float
+    times_checked: int
+    filling_coef: float
     potential_losses: float # 5
-    building_type: str # 0
+    building_type: str

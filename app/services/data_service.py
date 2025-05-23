@@ -49,6 +49,7 @@ async def do_check(obj: RawData, session: Session):
         return card
 
     card = {}
+    card.update({'address': obj.address, 'times_checked': 0, 'building_type': obj.buildingType})
 
     arg = json.loads(obj.__dict__['consumption'])
     cons = []
@@ -59,18 +60,26 @@ async def do_check(obj: RawData, session: Session):
 
     divs = []
     for i in range(len(cons)):
-        normal = 2894.53
-        normal += 2.32 * obj.totalArea if obj.totalArea is not None else 0
-        normal -= 177.30 * obj.residents_count if obj.residents_count is not None else 0
+        normal = 50
+        normal += 1.2 * obj.totalArea if obj.totalArea is not None else 0
+        normal += 30 * obj.residents_count if obj.residents_count is not None else 0
         if i+1 in [1, 2, 3]:
-            normal -= 379.95*1.2
+            normal = normal*1.2
         elif i+1 in [4, 5, 9, 10]:
-            normal -= 379.95*1.1
-        else:
-            normal -= 379.95
+            normal = normal*1.1
         divs.append(cons[i]/normal)
     card.update({'deviation': str(divs)[1:-1]})
 
-    card = AddressCard()
+    for d in divs:
+        ...
+
+    if not obj.isCommercial:
+        # Чек на юр. лицо
+        ...
+        is_ur = True
+
+
+
+
     return ...
 
