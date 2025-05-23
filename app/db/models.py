@@ -25,10 +25,10 @@ class AddressCard(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     address: Mapped[str] = mapped_column(String, unique=True)
 
-    avg_cons: Mapped[float] = mapped_column(Float) # В среднем по суткам
-    is_red: Mapped[bool] = mapped_column(Boolean, nullable=True)
-    deviation: Mapped[float] = mapped_column(Float) # Отклонение от нормы в коэф.
-    checked_times: Mapped[int] = mapped_column(Integer)
+    avg_cons: Mapped[float] = mapped_column(Float) # В среднем по месяцам
+    level: Mapped[int] = mapped_column(String, nullable=True)
+    deviation: Mapped[str] = mapped_column(Float) # Отклонение от нормы в коэф.
+    times_checked: Mapped[int] = mapped_column(Integer)
     filling_coef: Mapped[float] = mapped_column(Float)
     potential_losses: Mapped[float] = mapped_column(Float) # Рублей (по разнице с эталоном)
     building_type: Mapped[str] = mapped_column(String)
