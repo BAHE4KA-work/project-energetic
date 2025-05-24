@@ -381,7 +381,7 @@ async def do_plural_check(our_cr: int, data: RawData):
     conditions = [int(our_cr), neuro_cr if neuro_cr else False]
     if case_cr >= 4:
         conditions.append(1)
-    if neuro_pars_cr['commertial_activty']:
+    if neuro_pars_cr['commercial_activity']:
         conditions.append(1)
     if casual_pars_cr:
         conditions.append(1)
