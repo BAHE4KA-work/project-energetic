@@ -27,7 +27,7 @@ class AddressCard(Base):
 
     avg_cons: Mapped[float] = mapped_column(Float) # В среднем по месяцам
     level: Mapped[int] = mapped_column(String, nullable=True)
-    deviation: Mapped[str] = mapped_column(Float) # Отклонение от нормы в коэф.
+    deviation: Mapped[str] = mapped_column(String) # Отклонение от нормы в коэф.
     times_checked: Mapped[int] = mapped_column(Integer)
     filling_coef: Mapped[float] = mapped_column(Float)
     potential_losses: Mapped[float] = mapped_column(Float) # Рублей (по разнице с эталоном)

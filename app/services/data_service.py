@@ -6,9 +6,10 @@ from sqlalchemy.orm import Session
 
 from app.db.models import RawData, AddressCard
 from app.schemas.data import DataInputScheme
+from app.services.check_service import do_plural_check
 
 
-async def save_data(data: DataInputScheme, session: Session):
+async def save_data(data: DataInputScheme, session: Session, do_check: bool = True):
     new_data = {}
     for key, arg in data.__dict__.items():
         if key == 'consumption':
@@ -21,10 +22,10 @@ async def save_data(data: DataInputScheme, session: Session):
     session.add(obj)
     session.commit()
     session.refresh(obj)
-    return await create_card(obj, session)
+    return await create_card(obj, session, do_check)
 
 
-async def import_data(file: UploadFile, session: Session):
+async def import_data(file: UploadFile, session: Session, do_check: bool = True):
     raw = await file.read()
     text = raw.decode("utf-8")
     try:
@@ -42,10 +43,10 @@ async def import_data(file: UploadFile, session: Session):
         parsed.append(obj)
 
     for p in parsed:
-        await save_data(p, session)
+        await save_data(p, session, do_check)
 
 
-async def create_card(obj: RawData, session: Session) -> AddressCard | dict:
+async def create_card(obj: RawData, session: Session, do_check: bool = True) -> AddressCard | dict:
     card: Optional[AddressCard] = session.query(AddressCard).filter_by(address=obj.address).first()
     if card is not None:
         return card
@@ -58,7 +59,10 @@ async def create_card(obj: RawData, session: Session) -> AddressCard | dict:
     for k, a in arg.items():
         cons.append(a)
     card.update({'avg_cons': sum(cons) / len(cons)})
-    card.update({'filling_coef': sum(cons) / len(cons) / max(cons)})
+    try:
+        card.update({'filling_coef': sum(cons) / len(cons) / max(cons)})
+    except ZeroDivisionError:
+        card.update({'filling_coef': 0})
 
     divs = []
     for i in range(len(cons)):
@@ -92,4 +96,6 @@ async def create_card(obj: RawData, session: Session) -> AddressCard | dict:
     session.add(card)
     session.commit()
     session.refresh(card)
+    if do_check:
+        await do_plural_check(level, obj)
     return card

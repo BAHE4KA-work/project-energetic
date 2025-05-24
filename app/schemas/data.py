@@ -27,8 +27,30 @@ class ClientCard(base):
 
     avg_cons: float
     level: int
-    deviation: float
+    deviation: str
     times_checked: int
     filling_coef: float
     potential_losses: float
     building_type: str
+#
+# class CheckDataFrame(base):
+#     accountId: int
+#     isCommercial: Optional[bool] = None
+#     address: str
+#     buildingType: str
+#     roomsCount: Optional[int] = None
+#     residents_count: Optional[int] = None
+#     totalArea: Optional[float] = None
+#
+#     consumption_1: Optional[int] = None
+#     consumption_2: Optional[int] = None
+#     consumption_3: Optional[int] = None
+#     consumption_4: Optional[int] = None
+#     consumption_5: Optional[int] = None
+#     consumption_6: Optional[int] = None
+#     consumption_7: Optional[int] = None
+#     consumption_8: Optional[int] = None
+#     consumption_9: Optional[int] = None
+#     consumption_10: Optional[int] = None
+#     consumption_11: Optional[int] = None
+#     consumption_12: Optional[int] = None
