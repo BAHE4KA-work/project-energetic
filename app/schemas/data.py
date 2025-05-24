@@ -26,9 +26,9 @@ class ClientCard(base):
     address: str
 
     avg_cons: float
-    level: Optional[int] = None # 4
+    level: int
     deviation: float
     times_checked: int
     filling_coef: float
-    potential_losses: float # 5
+    potential_losses: float
     building_type: str

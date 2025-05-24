@@ -3,7 +3,6 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-# from app.db.models import RawData
 from app.schemas.data import DataInputScheme
 import app.services.data_service as ds
 
@@ -29,5 +28,3 @@ async def import_raw_data(file: UploadFile = File(...), session: Session = Depen
         return JSONResponse(content='Success', status_code=201)
     except Exception as e:
         raise HTTPException(status_code=400, detail=e)
-
-#@

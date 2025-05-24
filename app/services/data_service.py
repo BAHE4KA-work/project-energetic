@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Optional
 
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
@@ -8,7 +8,7 @@ from app.db.models import RawData, AddressCard
 from app.schemas.data import DataInputScheme
 
 
-async def save_data(data: DataInputScheme, session: Session) -> None:
+async def save_data(data: DataInputScheme, session: Session):
     new_data = {}
     for key, arg in data.__dict__.items():
         if key == 'consumption':
@@ -17,9 +17,11 @@ async def save_data(data: DataInputScheme, session: Session) -> None:
             new_data.update({'residents_count': arg})
         else:
             new_data.update({key: arg})
-    object = RawData(**new_data)
-    session.add(object)
+    obj = RawData(**new_data)
+    session.add(obj)
     session.commit()
+    session.refresh(obj)
+    return await create_card(obj, session)
 
 
 async def import_data(file: UploadFile, session: Session):
@@ -43,12 +45,12 @@ async def import_data(file: UploadFile, session: Session):
         await save_data(p, session)
 
 
-async def do_check(obj: RawData, session: Session):
-    card = session.query(AddressCard).filter_by(address=obj.address).first()
+async def create_card(obj: RawData, session: Session) -> AddressCard | dict:
+    card: Optional[AddressCard] = session.query(AddressCard).filter_by(address=obj.address).first()
     if card is not None:
         return card
 
-    card = {}
+    card: dict = {}
     card.update({'address': obj.address, 'times_checked': 0, 'building_type': obj.buildingType})
 
     arg = json.loads(obj.__dict__['consumption'])
@@ -70,16 +72,24 @@ async def do_check(obj: RawData, session: Session):
         divs.append(cons[i]/normal)
     card.update({'deviation': str(divs)[1:-1]})
 
+    y = 0
+    r = 0
     for d in divs:
-        ...
+        if 1.2 <= d <= 1.6:
+            y += 1
+        elif d > 1.6:
+            r += 1
 
-    if not obj.isCommercial:
-        # Чек на юр. лицо
-        ...
-        is_ur = True
+    level: int = 0
+    if r >= 6:
+        level = 2
+    elif y >= 6 or y+r >= 6:
+        level = 1
 
+    card.update({'level': level, 'potential_losses': sum(cons)*(sum(divs)-1*len(divs))*4.5})
 
-
-
-    return ...
-
+    card: AddressCard = AddressCard(**card)
+    session.add(card)
+    session.commit()
+    session.refresh(card)
+    return card
