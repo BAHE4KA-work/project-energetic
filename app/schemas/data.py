@@ -1,5 +1,5 @@
 from pydantic import BaseModel as base
-from typing import Optional
+from typing import Optional, List
 
 
 class DataInputScheme(base):
@@ -42,25 +42,18 @@ class AddressFilter(base):
 class RiskLevelFilter(base):
     level: Optional[int] = None  # 0 - нормальный, 1 - желтый, 2 - красный
 
-#
-# class CheckDataFrame(base):
-#     accountId: int
-#     isCommercial: Optional[bool] = None
-#     address: str
-#     buildingType: str
-#     roomsCount: Optional[int] = None
-#     residents_count: Optional[int] = None
-#     totalArea: Optional[float] = None
-#
-#     consumption_1: Optional[int] = None
-#     consumption_2: Optional[int] = None
-#     consumption_3: Optional[int] = None
-#     consumption_4: Optional[int] = None
-#     consumption_5: Optional[int] = None
-#     consumption_6: Optional[int] = None
-#     consumption_7: Optional[int] = None
-#     consumption_8: Optional[int] = None
-#     consumption_9: Optional[int] = None
-#     consumption_10: Optional[int] = None
-#     consumption_11: Optional[int] = None
-#     consumption_12: Optional[int] = None
+
+class EventSchema(base):
+    id: int
+    address_card_id: int
+    type: str
+    is_done: bool
+    worker_id: Optional[int]
+
+    class Config:
+        orm_mode = True
+
+
+class ReportSchema(base):
+    address_card_id: int
+    events: List[EventSchema]

@@ -106,7 +106,7 @@ async def create_card(obj: RawData, session: Session, do_check: bool = True):
     return card, res
 
 
-def get_cards_by_address_filter(session: Session, city: str | None = None, street: str | None = None):
+async def get_cards_by_address_filter(session: Session, city: str | None = None, street: str | None = None):
     query = session.query(AddressCard)
     if city:
         query = query.filter(AddressCard.address.ilike(f'%{city}%'))
@@ -115,6 +115,6 @@ def get_cards_by_address_filter(session: Session, city: str | None = None, stree
     return query.all()
 
 
-def get_cards_by_risk_level(session: Session, level: int):
+async def get_cards_by_risk_level(session: Session, level: int):
     return session.query(AddressCard).filter(AddressCard.level == str(level)).all()
 

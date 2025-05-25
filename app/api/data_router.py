@@ -1,9 +1,7 @@
-from typing import List
 from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
-from app.db.models import AddressCard
 from app.db.session import get_db
 from app.schemas.data import DataInputScheme, AddressFilter
 import app.services.data_service as ds
@@ -32,23 +30,23 @@ async def import_raw_data(do_check: bool = True, file: UploadFile = File(...), s
         raise HTTPException(status_code=400, detail=e)
 
 
-@router.post('/filter_by_address', response_model=List[AddressCard])
+@router.post('/filter_by_address')
 async def filter_cards_by_address(filter: AddressFilter, session: Session = Depends(get_db)):
-    cards = ds.get_cards_by_address_filter(session, city=filter.city, street=filter.street)
+    cards = await ds.get_cards_by_address_filter(session, city=filter.city, street=filter.street)
     if not cards:
         raise HTTPException(status_code=404, detail="Данные по заданному фильтру не найдены")
     return cards
 
-@router.get('/red_violations', response_model=List[AddressCard])
+@router.get('/red_violations')
 async def get_red_violations(session: Session = Depends(get_db)):
-    cards = ds.get_cards_by_risk_level(session, level=2)
+    cards = await ds.get_cards_by_risk_level(session, level=2)
     if not cards:
         raise HTTPException(status_code=404, detail="Нет красных нарушений")
     return cards
 
-@router.get('/yellow_violations', response_model=List[AddressCard])
+@router.get('/yellow_violations')
 async def get_yellow_violations(session: Session = Depends(get_db)):
-    cards = ds.get_cards_by_risk_level(session, level=1)
+    cards = await ds.get_cards_by_risk_level(session, level=1)
     if not cards:
         raise HTTPException(status_code=404, detail="Нет подозрительных отклонений")
     return cards
