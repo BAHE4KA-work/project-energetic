@@ -27,6 +27,7 @@ async def on_startup():
         BotCommand(command="start", description="Авторизация"),
         BotCommand(command="plan", description="Показать план проверок"),
         BotCommand(command="route", description="Получить маршрут до точки"),
+        BotCommand(command='take', description='Взять свободную задачу')
     ])
 
     asyncio.create_task(dp.start_polling(bot))

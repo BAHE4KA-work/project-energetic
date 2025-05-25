@@ -29,11 +29,14 @@ async def get_events(master_id: int) -> List[Event]:
         r.raise_for_status()
         return [Event(**item) for item in r.json()]
 
-async def mark_done(event_id: int, master_id: int) -> Event:
+async def mark_done(event_id: int, master_id: int) -> Event | dict:
     async with httpx.AsyncClient() as client:
         r = await client.post(f"{SERVER_URL}/bot/events/{event_id}/done", json={"master_id": master_id})
         r.raise_for_status()
-        return Event(**r.json())
+        r = r.json()
+        if type(r) is dict and r['result'] == 'success':
+            return r
+        return Event(**r)
 
 
 async def get_address_card(address_card_id: int):
@@ -53,3 +56,12 @@ async def get_route(master_lat: float, master_lon: float, dest_lat: float, dest_
         })
         r.raise_for_status()
         return r.json()
+
+
+async def assign_report(master_id: int) -> Optional[Event]:
+    async with httpx.AsyncClient() as client:
+        r = await client.post(f"{SERVER_URL}/events/assign_report/{master_id}")
+        if r.status_code == 404:
+            return None
+        r.raise_for_status()
+        return Event(**r.json())

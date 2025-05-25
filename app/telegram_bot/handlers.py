@@ -16,7 +16,7 @@ from app.telegram_bot.service import (
     get_events,
     mark_done,
     get_route,
-    get_address_card,
+    get_address_card, assign_report,
 )
 
 router = Router()
@@ -94,6 +94,7 @@ async def process_done(callback: CallbackQuery):
             await callback.message.answer(f'Отчёт успешно завершён!')
         else:
             await callback.message.answer(f"Переходим к этапу: {new_event.type}")
+            # await cmd_plan(message=callback.message)
     except Exception:
         await callback.message.answer("Ошибка при отметке.")
     await callback.answer()
@@ -132,4 +133,30 @@ async def handle_location(message: Message):
         f"Расстояние: {route['distance_km']} км\n"
         f"Начало: {route['start']}\n"
         f"Конец: {route['end']}"
+    )
+
+
+@router.message(Command("take"))
+async def cmd_take(message: Message):
+    master_id = authorized_masters.get(message.chat.id)
+    if not master_id:
+        await message.answer("Сначала авторизуйтесь через /start")
+        return
+
+    events = await get_events(master_id)
+    active = next((ev for ev in events if not ev.is_done), None)
+    if active:
+        await message.answer(f"У вас уже есть активная задача:\n• {active.type}")
+        return
+
+    ev = await assign_report(master_id)
+    if not ev:
+        await message.answer("Свободных задач для назначения пока нет.")
+        return
+
+    card = await get_address_card(ev.address_card_id)
+    await message.answer(
+        f"Вам назначен новый этап проверки:\n"
+        f"• Этап: {ev.type}\n"
+        f"• Адрес: {card.address}"
     )
