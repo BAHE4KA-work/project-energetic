@@ -6,7 +6,7 @@ from app.db.session import get_db
 from app.schemas.master import MasterCreate, MasterUpdate, MasterRead
 from app.services.master_service import create_master, get_master, get_all_masters, update_master, delete_master
 
-router = APIRouter(prefix="/admin/masters", tags=["admin_masters"])
+router = APIRouter(prefix="/admin/masters", tags=["Управление мастерами"])
 
 @router.post("/", response_model=MasterRead)
 def create_master_endpoint(data: MasterCreate, session: Session = Depends(get_db)):

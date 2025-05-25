@@ -1,7 +1,6 @@
-from typing import Type, List
+from typing import List
 from sqlalchemy import Integer, String, Boolean, Float, ForeignKey
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-import json
 
 from app.db.base import Base
 
@@ -26,7 +25,7 @@ class AddressCard(Base):
     address: Mapped[str] = mapped_column(String, unique=True)
 
     avg_cons: Mapped[float] = mapped_column(Float) # В среднем по месяцам
-    level: Mapped[int] = mapped_column(String, nullable=True)
+    level: Mapped[int] = mapped_column(Integer, nullable=True)
     deviation: Mapped[str] = mapped_column(String) # Отклонение от нормы в коэф.
     times_checked: Mapped[int] = mapped_column(Integer)
     filling_coef: Mapped[float] = mapped_column(Float)

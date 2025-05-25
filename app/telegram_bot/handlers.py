@@ -2,13 +2,13 @@ from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, KeyboardButton, ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.fsm.context import FSMContext
+from aiogram.types import CallbackQuery
 
 from app.telegram_bot.states import AuthStates
-from app.telegram_bot.service import authorize_master, get_events, mark_done, get_route
+from app.telegram_bot.service import authorize_master, get_events, mark_done, get_route, get_address_card
 
 router = Router()
 
-# Для хранения авторизованных мастеров (chat_id -> master_id)
 authorized_masters = {}
 
 @router.message(Command("start"))
@@ -39,16 +39,29 @@ async def cmd_plan(message: Message):
         await message.answer("План проверок пуст.")
         return
 
-    text = "Ваш план проверок:\n"
-    buttons = InlineKeyboardMarkup(row_width=1)
+    # Формируем текст с адресом и списком ивентов
+    texts = []
     for ev in events:
+        try:
+            addr_card = await get_address_card(ev.address_card_id)
+            addr = addr_card.address
+        except:
+            addr = ''
         status = "✅" if ev.is_done else "❌"
-        btn = InlineKeyboardButton(text=f"{status} {ev.type}", callback_data=f"done_{ev.id}")
-        buttons.add(btn)
+        texts.append(f"{status} {ev.type}\nАдрес: {addr}")
 
-    await message.answer(text, reply_markup=buttons)
+    full_text = "Ваш план проверок:\n\n" + "\n\n".join(texts)
 
-from aiogram.types import CallbackQuery
+    # Формируем inline клавиатуру по событиям (каждая кнопка — одна строка)
+    buttons = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=f"{'✅' if ev.is_done else '❌'} {ev.type}", callback_data=f"done_{ev.id}")]
+            for ev in events
+        ]
+    )
+
+    await message.answer(full_text, reply_markup=buttons)
+
 
 @router.callback_query(F.data.startswith("done_"))
 async def process_done(callback: CallbackQuery):

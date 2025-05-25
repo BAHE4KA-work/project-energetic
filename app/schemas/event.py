@@ -1,31 +1,23 @@
 from pydantic import BaseModel
-from typing import List
+from typing import Optional
 
-class MasterAuth(BaseModel):
-    id: int
-    name: str
+class EventCreate(BaseModel):
+    address_card_id: int
+    type: str
+    is_done: Optional[bool] = False
+    worker_id: Optional[int] = None
+
+class EventUpdate(BaseModel):
+    type: Optional[str] = None
+    is_done: Optional[bool] = None
+    worker_id: Optional[int] = None
 
 class EventRead(BaseModel):
     id: int
     address_card_id: int
     type: str
-    is_done: bool
+    is_done: Optional[bool]
+    worker_id: Optional[int]
 
     class Config:
         orm_mode = True
-
-class LocationInput(BaseModel):
-    master_lat: float
-    master_lon: float
-    dest_lat: float
-    dest_lon: float
-
-class RouteStep(BaseModel):
-    lat: float
-    lon: float
-
-class RouteResponse(BaseModel):
-    start: RouteStep
-    end: RouteStep
-    route: List[RouteStep]
-    distance_km: float

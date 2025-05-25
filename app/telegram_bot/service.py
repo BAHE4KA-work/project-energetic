@@ -1,7 +1,9 @@
 import httpx
 from typing import List, Optional
+
 from pydantic import BaseModel
 
+from app.schemas.data import ClientCard
 from app.telegram_bot.config import SERVER_URL
 
 class MasterAuthResponse(BaseModel):
@@ -32,6 +34,14 @@ async def mark_done(event_id: int, master_id: int) -> Event:
         r = await client.post(f"{SERVER_URL}/bot/events/{event_id}/done", json={"master_id": master_id})
         r.raise_for_status()
         return Event(**r.json())
+
+
+async def get_address_card(address_card_id: int):
+    async with httpx.AsyncClient() as client:
+        r = await client.get(f"{SERVER_URL}/bot/address?address_card_id={address_card_id}")
+        r.raise_for_status()
+        return ClientCard(**r.json())
+
 
 async def get_route(master_lat: float, master_lon: float, dest_lat: float, dest_lon: float) -> dict:
     async with httpx.AsyncClient() as client:

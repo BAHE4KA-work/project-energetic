@@ -1,58 +1,43 @@
+from typing import List, Optional, Type
 from sqlalchemy.orm import Session
-from typing import Optional, List, Type
-from app.db.models import Master, Event
+from app.db.models import Event
 
+def get_all_events(session: Session) -> List[Type[Event]]:
+    return session.query(Event).all()
 
-def authorize_master_by_code(session: Session, code: str) -> Optional[Master]:
-    return session.query(Master).filter(Master.code == code).first()
+def get_event_by_id(session: Session, event_id: int) -> Optional[Event]:
+    return session.query(Event).filter(Event.id == event_id).first()
 
-
-def get_events_for_master(session: Session, master_id: int) -> List[Type[Event]]:
-    return session.query(Event).filter(Event.worker_id == master_id).order_by(Event.id).all()
-
-
-def mark_event_done(session: Session, event_id: int, master_id: int) -> Optional[Event]:
-    event = session.query(Event).filter(Event.id == event_id, Event.worker_id == master_id).first()
-    if event:
-        event.is_done = True
-        session.commit()
-        session.refresh(event)
+def create_event(session: Session, address_card_id: int, type: str, is_done: Optional[bool] = False, worker_id: Optional[int] = None) -> Event:
+    event = Event(
+        address_card_id=address_card_id,
+        type=type,
+        is_done=is_done,
+        worker_id=worker_id
+    )
+    session.add(event)
+    session.commit()
+    session.refresh(event)
     return event
 
-# Инициация цепочки событий (плана отчёта)
-def initiate_check(address_card_id: int, session: Session, master_id: Optional[int] = None) -> List[Event]:
-    stages = [
-        "Выявлены аномалии",
-        "Направлено уведомление",
-        "Назначена очная проверка",
-        "Подтверждено нарушение",
-        "Переход на другой тариф",
-        "Контроль через месяц",
-    ]
-    created_events = []
-    for stage in stages:
-        event = Event(
-            address_card_id=address_card_id,
-            type=stage,
-            is_done=False,
-            worker_id=master_id
-        )
-        session.add(event)
-        created_events.append(event)
+def update_event(session: Session, event_id: int, type: Optional[str] = None, is_done: Optional[bool] = None, worker_id: Optional[int] = None) -> Optional[Event]:
+    event = get_event_by_id(session, event_id)
+    if not event:
+        return None
+    if type is not None:
+        event.type = type
+    if is_done is not None:
+        event.is_done = is_done
+    if worker_id is not None:
+        event.worker_id = worker_id
     session.commit()
-    for event in created_events:
-        session.refresh(event)
-    return created_events
+    session.refresh(event)
+    return event
 
-
-def generate_route(master_lat: float, master_lon: float, dest_lat: float, dest_lon: float) -> dict:
-    # Тут заглушка, позже подключим внешний сервис маршрутизации
-    return {
-        "start": {"lat": master_lat, "lon": master_lon},
-        "end": {"lat": dest_lat, "lon": dest_lon},
-        "route": [
-            {"lat": master_lat, "lon": master_lon},
-            {"lat": dest_lat, "lon": dest_lon}
-        ],
-        "distance_km": 5.0  # пример
-    }
+def delete_event(session: Session, event_id: int) -> bool:
+    event = get_event_by_id(session, event_id)
+    if not event:
+        return False
+    session.delete(event)
+    session.commit()
+    return True

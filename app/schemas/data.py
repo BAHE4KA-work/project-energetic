@@ -23,15 +23,25 @@ class FilterInput(base):
 
 
 class ClientCard(base):
-    address: str
+    address: Optional[str] = None
 
-    avg_cons: float
-    level: int
-    deviation: str
-    times_checked: int
-    filling_coef: float
-    potential_losses: float
-    building_type: str
+    avg_cons: Optional[float] = None
+    level: Optional[int] = None
+    deviation: Optional[str] = None
+    times_checked: Optional[int] = None
+    filling_coef: Optional[float] = None
+    potential_losses: Optional[float] = None
+    building_type: Optional[str] = None
+
+
+class AddressFilter(base):
+    city: Optional[str] = None
+    street: Optional[str] = None
+
+
+class RiskLevelFilter(base):
+    level: Optional[int] = None  # 0 - нормальный, 1 - желтый, 2 - красный
+
 #
 # class CheckDataFrame(base):
 #     accountId: int

@@ -1,38 +1,50 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
 from typing import List
+from sqlalchemy.orm import Session
 
+from app.schemas.event import EventCreate, EventUpdate, EventRead
+from app.services.event_service import get_all_events, get_event_by_id, create_event, update_event, delete_event
 from app.db.session import get_db
-from app.schemas.event import MasterAuth, EventRead, RouteResponse
-from app.services.event_service import (
-    authorize_master_by_code,
-    get_events_for_master,
-    mark_event_done,
-    generate_route
-)
 
-router = APIRouter(prefix='/bot', tags=['Отчёты'])
+router = APIRouter(prefix="/events", tags=["Ивенты"])
 
-@router.post("/auth", response_model=MasterAuth)
-def auth_master(code: dict[str, str], session: Session = Depends(get_db)):
-    master = authorize_master_by_code(session, code['code'])
-    if not master:
-        raise HTTPException(status_code=401, detail="Invalid authorization code")
-    return MasterAuth(id=master.id, name=master.name)
+@router.get("/", response_model=List[EventRead])
+def read_events(session: Session = Depends(get_db)):
+    return get_all_events(session)
 
-@router.get("/events", response_model=List[EventRead])
-def fetch_plan(master_id: int, session: Session = Depends(get_db)):
-    events = get_events_for_master(session, master_id)
-    return events
-
-@router.post("/events/{event_id}/done", response_model=EventRead)
-def complete_event(event_id: int, master_id: int, session: Session = Depends(get_db)):
-    event = mark_event_done(session, event_id, master_id)
+@router.get("/{event_id}", response_model=EventRead)
+def read_event(event_id: int, session: Session = Depends(get_db)):
+    event = get_event_by_id(session, event_id)
     if not event:
-        raise HTTPException(status_code=404, detail="Event not found or not assigned to this master")
+        raise HTTPException(status_code=404, detail="Event not found")
     return event
 
-@router.post("/route", response_model=RouteResponse)
-def get_route(master_lat: float, master_lon: float, dest_lat: float, dest_lon: float):
-    route = generate_route(master_lat, master_lon, dest_lat, dest_lon)
-    return route
+@router.post("/", response_model=EventRead)
+def create_new_event(event_in: EventCreate, session: Session = Depends(get_db)):
+    return create_event(
+        session,
+        address_card_id=event_in.address_card_id,
+        type=event_in.type,
+        is_done=event_in.is_done,
+        worker_id=event_in.worker_id
+    )
+
+@router.put("/{event_id}", response_model=EventRead)
+def update_existing_event(event_id: int, event_in: EventUpdate, session: Session = Depends(get_db)):
+    event = update_event(
+        session,
+        event_id,
+        type=event_in.type,
+        is_done=event_in.is_done,
+        worker_id=event_in.worker_id
+    )
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    return event
+
+@router.delete("/{event_id}", response_model=dict)
+def delete_existing_event(event_id: int, session: Session = Depends(get_db)):
+    success = delete_event(session, event_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Event not found")
+    return {"detail": "Event deleted"}

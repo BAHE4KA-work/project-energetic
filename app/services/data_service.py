@@ -104,3 +104,17 @@ async def create_card(obj: RawData, session: Session, do_check: bool = True):
     if do_check:
         res = await do_plural_check(level, obj)
     return card, res
+
+
+def get_cards_by_address_filter(session: Session, city: str | None = None, street: str | None = None):
+    query = session.query(AddressCard)
+    if city:
+        query = query.filter(AddressCard.address.ilike(f'%{city}%'))
+    if street:
+        query = query.filter(AddressCard.address.ilike(f'%{street}%'))
+    return query.all()
+
+
+def get_cards_by_risk_level(session: Session, level: int):
+    return session.query(AddressCard).filter(AddressCard.level == str(level)).all()
+

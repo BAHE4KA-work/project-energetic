@@ -6,7 +6,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.types import BotCommand
 from fastapi import FastAPI
 
-from app.api import data_router, check_router, event_router, master_router
+from app.api import data_router, check_router, bot_router, master_router, event_router
 from app.db.base import Base
 from app.db.session import engine
 
@@ -38,8 +38,9 @@ async def on_shutdown():
 Base.metadata.create_all(bind=engine)
 
 app.include_router(data_router.router)
-app.include_router(check_router.router)
 app.include_router(event_router.router)
+app.include_router(check_router.router)
+app.include_router(bot_router.router)
 app.include_router(master_router.router)
 
 if __name__ == '__main__':
