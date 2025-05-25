@@ -1,5 +1,5 @@
 import json
-from typing import List, Optional
+from typing import Optional
 
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
@@ -37,16 +37,20 @@ async def import_data(file: UploadFile, session: Session, do_check: bool = True)
                 continue
             data.append(json.loads(ln))
 
-    parsed: List[DataInputScheme] = []
+    c = [0, 0]
     for item in data:
-        obj = DataInputScheme(**item)
-        parsed.append(obj)
+        _, res = await save_data(DataInputScheme(**item), session, do_check)
+        if res == item['isCommercial']:
+            c[1] += 1
+        c[0] += 1
 
-    for p in parsed:
-        await save_data(p, session, do_check)
+        if c[0] >= 50:
+            print(c)
+            break
+    return c
 
 
-async def create_card(obj: RawData, session: Session, do_check: bool = True) -> AddressCard | dict:
+async def create_card(obj: RawData, session: Session, do_check: bool = True):
     card: Optional[AddressCard] = session.query(AddressCard).filter_by(address=obj.address).first()
     if card is not None:
         return card
@@ -96,6 +100,7 @@ async def create_card(obj: RawData, session: Session, do_check: bool = True) -> 
     session.add(card)
     session.commit()
     session.refresh(card)
+    res = None
     if do_check:
-        await do_plural_check(level, obj)
-    return card
+        res = await do_plural_check(level, obj)
+    return card, res

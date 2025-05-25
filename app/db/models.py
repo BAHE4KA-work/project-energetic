@@ -40,15 +40,22 @@ class AddressCard(Base):
     )
 
 
+class Master(Base):
+    __tablename__ = 'masters'
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String, nullable=False)
+    code: Mapped[str] = mapped_column(String, unique=True, nullable=False)  # Код для авторизации
+
+    events: Mapped[list["Event"]] = relationship("Event", back_populates="worker")
+
+
 class Event(Base):
     __tablename__ = 'events'
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    address_card_id: Mapped[int] = mapped_column(ForeignKey("address_cards.id"))
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    address_card_id: Mapped[int] = mapped_column(ForeignKey("address_cards.id"), nullable=False)
+    type: Mapped[str] = mapped_column(String, nullable=False)  # этапы проверки
+    is_done: Mapped[bool] = mapped_column(Boolean, default=False)
+    worker_id: Mapped[int | None] = mapped_column(ForeignKey("masters.id"), nullable=True)
 
-    type: Mapped[str] = mapped_column(String) # 'Warn', 'Check'
-    is_done: Mapped[bool] = mapped_column(Boolean, nullable=True) # True - выполнен, False - не выполнен, None - не требует выполнения
-
-    address_card: Mapped["AddressCard"] = relationship(
-        "AddressCard",
-        back_populates="events"
-    )
+    address_card: Mapped['AddressCard'] = relationship('AddressCard', back_populates='events')
+    worker: Mapped["Master"] = relationship("Master", back_populates="events")

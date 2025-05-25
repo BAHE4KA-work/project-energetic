@@ -234,12 +234,12 @@ async def neuro_pars_check(address):
         "You get list of website titles from a search result for an address.\n\n"
         "Task: decide if there is clear commercial activity at this address.\n\n"
         "Rules:\n"
-        "- Answer true only if titles mention clear business indicators like hotel, store, restaurant, office, company, or service.\n"
+        "- Answer high score (0.7 or more) only if titles mention clear business indicators like hotel, store, restaurant, office, company, or service.\n"
         "- Do reasoning in Russian"
-        "- Do NOT answer true just because titles contain street names, addresses, or general location info without business hints.\n\n"
+        "- Do NOT answer high score just because titles contain street names, addresses, or general location info without business hints.\n\n"
         "Respond ONLY in JSON:\n\n"
         "{\n"
-        "  \"commercial_activity\": true or false,\n"
+        "  \"commercial_activity\": 0.0 to 1.0,\n"
         "  \"reasoning\": \"short explanation based on titles\"\n"
         "}\n\n"
         "Examples:\n\n"
@@ -253,7 +253,7 @@ async def neuro_pars_check(address):
         "]\n\n"
         "Output:\n"
         "{\n"
-        "  \"commercial_activity\": true,\n"
+        "  \"commercial_activity\": 0.9,\n"
         "  \"reasoning\": \"Multiple titles mention 'Hotel Triera', indicating a hotel business at this address.\"\n"
         "}\n\n"
         "Input:\n"
@@ -266,13 +266,14 @@ async def neuro_pars_check(address):
         "]\n\n"
         "Output:\n"
         "{\n"
-        "  \"commercial_activity\": false,\n"
+        "  \"commercial_activity\": 0.2,\n"
         "  \"reasoning\": \"Titles contain only street names and general location info without any mention of business or commercial activity.\"\n"
         "}"
     )
 
     # Формируем пользовательский промпт под конкретный запрос и заголовки
-    user_prompt = f"Query: {address}\n" \
+    user_prompt = f"/no_think\n" \
+                  f"Query: {address}\n" \
                   f"1. {titles[0]}\n" \
                   f"2. {titles[1]}\n" \
                   f"3. {titles[2]}\n" \
@@ -280,7 +281,7 @@ async def neuro_pars_check(address):
                   f"5. {titles[4]}"
 
     data = {
-        "model": "gemma-2-2b-it",
+        "model": "qwen3-0.6b:2",
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt}
@@ -294,12 +295,12 @@ async def neuro_pars_check(address):
             "type": "object",
             "properties": {
                 "commercial_activity": {
-                    "type": "boolean",
-                    "description": "True if commercial activity is detected, false otherwise"
+                    "type": "float",
+                    "description": "Chance of doing commercial. 1.0 - max chance, 0.0 - min chance."
                 },
                 "reasoning": {
                     "type": "string",
-                    "description": "Short explanation based on the input titles ONLY IN RUSSIAN lang"
+                    "description": "Short explanation ONLY IN RUSSIAN lang based on the input titles "
                 }
             },
             "required": ["commercial_activity", "reasoning"],
@@ -310,7 +311,10 @@ async def neuro_pars_check(address):
     response = requests.post(url, headers=headers, data=json.dumps(data))
     response.raise_for_status()
     try:
-        return json.loads(json.loads(response.content.decode())['choices'][0]['message']['content'])
+        s = json.loads(response.content.decode())['choices'][0]['message']['content']
+        cleaned = s.replace('<think>', '').replace('</think>', '').strip()
+        cleaned = ' '.join(cleaned.splitlines())
+        return json.loads(cleaned)
     except Exception as e:
         return None
 
@@ -347,43 +351,54 @@ async def neuro_check(data: RawData):
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors='coerce')
 
+    df[numeric_cols] = df[numeric_cols].fillna(0)
+
     h2o_df = h2o.H2OFrame(df)
 
     prediction = model.predict(h2o_df)
     pred_df = prediction.as_data_frame()
-    prob_true = pred_df.loc[0, 'TRUE']
+    prob_true = pred_df.loc[0, 'True']
 
     return prob_true
 
 
-async def do_plural_check(our_cr: int, data: RawData):
+async def do_plural_check(our_cr: int, data: RawData, search_check: bool = True):
     address = data.address
+
     try:
         case_cr = await case_check(data)
-    except:
+    except Exception as e:
         case_cr = None
 
     try:
         neuro_cr = await neuro_check(data)
-    except:
+    except Exception as e:
         neuro_cr = None
 
-    try:
-        neuro_pars_cr = await neuro_pars_check(address)
-    except:
+    if search_check:
+        try:
+            neuro_pars_cr = await neuro_pars_check(address)
+        except Exception as e:
+            neuro_pars_cr = None
+    else:
         neuro_pars_cr = None
 
     try:
         casual_pars_cr = await casual_pars_check(address)
-    except:
+    except Exception as e:
         casual_pars_cr = None
 
-    conditions = [int(our_cr), neuro_cr if neuro_cr else False]
-    if case_cr >= 4:
+    conditions = [float(our_cr), float(neuro_cr)]
+    if case_cr >= 3:
         conditions.append(1)
-    if neuro_pars_cr['commercial_activity']:
-        conditions.append(1)
+    try:
+        if type(neuro_pars_cr['commercial_activity']) is float:
+            conditions.append(neuro_pars_cr['commercial_activity'])
+    except:
+        pass
     if casual_pars_cr:
         conditions.append(1)
 
-    return True if sum(conditions)/len(conditions) >= 3.5 else False
+    conditions = [x for x in conditions if x is not None]
+
+    return True if sum(conditions)/len(conditions) >= 0.65 else False

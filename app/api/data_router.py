@@ -27,5 +27,4 @@ async def import_raw_data(do_check: bool = True, file: UploadFile = File(...), s
         await ds.import_data(file, session, do_check)
         return JSONResponse(content='Success', status_code=201)
     except Exception as e:
-        print(e)
         raise HTTPException(status_code=400, detail=e)
