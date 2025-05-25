@@ -1,0 +1,159 @@
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    position: relative;
+    z-index: 10;
+}
+
+.panelBtn {
+  border-radius: 32px;
+  border: 1px solid var(--StrokeColor-light-grey, #CDCDCD);
+  background: var(--ComponentsColor-dark-white, #F0F3F4);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.btnInputCont {
+  display: flex;
+  gap: 16px;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #e7e6ff;
+  border: 1px solid #8c7bfa;
+  border-radius: 12px;
+  padding: 16px;
+  color: var(--TextColor-black, #121212);
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  cursor: pointer;
+  position: relative;
+    z-index: 100;
+}
+
+.selectedPointBtn {
+  display: flex;
+  padding: 16px;
+  align-items: center;
+  gap: 8px;
+  border-radius: 20px;
+  border: 1px solid var(--AccentColor-Dark-purple, #3A2BBC);
+  background: rgba(91, 73, 237, 0.10);
+  font-family: Inter;
+  font-size: 20px;
+  font-weight: 500;
+  color: #121212;
+  cursor: pointer;
+}
+
+
+.dropdownWrapper {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  top: 70px;
+  left: 0;
+  background: #e7e6ff;
+  border: 1px solid #8c7bfa;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 120;
+  width: 100%;
+}
+
+.dropdownItem {
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  color: var(--TextColor-black, #121212);
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  border-top: 1px solid #8c7bfa;
+}
+
+.dropdownItem:first-child {
+  border-top: none;
+}
+
+.dropdownItem:hover {
+  background: rgba(140, 123, 250, 0.2);
+}
+
+.MapStatCont {
+    display: flex;
+    gap: 32px;
+    position: relative;
+    z-index: 9;
+}
+
+.statCont {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.graphsCont {
+    display: flex;
+    gap: 32px;
+}
+
+.cardsCont {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.statCont {
+    animation: fadeInUp 1s ease-out;
+}
+
+.graphsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.cardsCont {
+  animation: fadeInUp 1s ease-out;
+  height: 100%;
+} 
+
+.barChartsCont {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 32px;
+} 

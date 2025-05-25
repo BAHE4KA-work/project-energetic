@@ -1,0 +1,262 @@
+body {
+    box-sizing: border-box;
+}
+
+@keyframes slideRightFadeIn {
+  0% {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.panel {
+  width: 25.069vw;
+  background: #f3f4f6;
+  font-family: Inter, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-radius: 32px;
+border: 1px solid var(--StrokeColor-light-grey, #CDCDCD);
+background: var(--ComponentsColor-dark-white, #F0F3F4);
+max-height: 636px;
+overflow-y: auto;
+
+  animation: slideRightFadeIn 1s ease forwards;
+
+
+scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;
+}
+
+.panel::-webkit-scrollbar,
+.scrollContent::-webkit-scrollbar {
+  display: none;                /* Chrome, Safari */
+}
+
+.header {
+  display: flex;
+padding: 16px 24px;
+justify-content: flex-start;
+align-items: center;
+gap: 10px;
+align-self: stretch;
+border-bottom: 1px solid var(--StrokeColor-light-grey, #CDCDCD);
+
+  color: var(--TextColor-black, #121212);
+text-align: center;
+font-family: Roboto;
+font-size: 24px;
+font-style: normal;
+font-weight: 400;
+line-height: 150%; /* 36px */
+letter-spacing: -0.264px;
+}
+
+.buttonCont {
+    padding: 0 1.11vw;
+}
+
+.scrollContent {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 16px; /* чтобы кнопка не перекрывала */
+}
+
+.dropdownButton {
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #8c7bfa;
+  background: #e7e6ff;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  display: flex;
+padding: 16px;
+justify-content: center;
+align-items: center;
+gap: 8px;
+align-self: stretch;
+}
+
+.dropdownList {
+  max-height: 0;
+  opacity: 0;
+  overflow-y: auto;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  color: white;
+  border-radius: 16px;
+  border: 1px solid var(--AccentColor-Dark-purple, #3A2BBC);
+  background: linear-gradient(0deg, rgba(91, 73, 237, 0.10), rgba(91, 73, 237, 0.10)), var(--ComponentsColor-dark-white, #F0F3F4);
+  margin: 16px;
+  padding: 0;
+  pointer-events: none;
+
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE/Edge */
+}
+
+.dropdownList::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.open {
+  max-height: 174px; /* 3 строки * ~58px */
+  opacity: 1;
+  pointer-events: all;
+}
+
+.closed {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+.dropdownItem {
+  padding: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-top: 1px solid var(--AccentColor-Dark-purple, #3A2BBC);
+border-bottom: 1px solid var(--AccentColor-Dark-purple, #3A2BBC);
+color: var(--TextColor-black, #121212);
+font-family: Inter;
+font-size: 20px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+}
+
+.dropdownItem:hover {
+  background: rgba(58, 43, 188, 0.25);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  color: var(--TextColor-black, #121212);
+font-family: Roboto;
+font-size: 20px;
+font-style: normal;
+font-weight: 500;
+line-height: 150%; /* 30px */
+letter-spacing: -0.22px;
+margin: 0 16px;
+margin-bottom: 12px;
+}
+
+.checkboxRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.checkboxText {
+    color: var(--TextColor-black, #121212);
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%; /* 24px */
+    letter-spacing: -0.176px;
+
+    display: flex;
+    gap: 8px;
+    padding: 0 24px;
+    justify-content: flex-start;
+}
+
+.checkboxTextB {
+    color: var(--TextColor-black, #121212);
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%; /* 24px */
+    letter-spacing: -0.176px;
+
+    display: flex;
+    gap: 8px;
+    padding: 0 16px;
+    justify-content: flex-start;
+}
+
+.applyBtn {
+    margin-top: auto;
+  margin-bottom:16px;
+  margin-left: 16px ;
+  margin-right: 16px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #e7e6ff;
+  border: 1px solid #8c7bfa;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+    transition: background-color 0.2s ease;
+
+}
+
+.applyBtn:hover {
+    background: rgba(58, 43, 188, 0.25);
+}
+
+.applyBtnText {
+    color: var(--TextColor-black, #121212);
+font-family: Inter;
+font-size: 20px;
+font-style: normal;
+font-weight: 500;
+line-height: normal;
+}
+
+.customCheckbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid var(--AccentColor-Purple, #5B49ED);
+  background: #FFF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  position: relative;
+}
+
+.customCheckbox:checked {
+  background: var(--AccentColor-Purple, #5B49ED);
+}
+
+/* Иконка галочки */
+.customCheckbox::after {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: url('../../assets/icons/check (3).svg') center/contain no-repeat;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.customCheckbox:checked::after {
+  opacity: 1;
+}
