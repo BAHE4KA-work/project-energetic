@@ -1,0 +1,53 @@
+@keyframes slideInUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.card {
+  display: flex;
+  padding: 24px;
+  flex-direction: column;
+  justify-content: center;
+  /* align-items: center; */
+  align-items: flex-start;
+  gap: 16px;
+  align-self: stretch;
+
+  border-radius: 32px;
+  border: 1px solid var(--StrokeColor-light-grey, #CDCDCD);
+  background: var(--ComponentsColor-dark-white, #F0F3F4);
+
+  animation: slideInUp 1s ease-out;
+}
+
+.label {
+  color: var(--TextColor-black, #121212);
+  font-family: Roboto;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%;
+}
+
+.valueBlock {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+}
+
+.value {
+  color: var(--TextColor-black, #121212);
+  font-feature-settings: 'ss01' on, 'cv01' on, 'cv11' on;
+  font-family: Inter;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 36px;
+}

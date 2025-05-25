@@ -1,0 +1,65 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+  margin-top: 32px;
+  margin-bottom: 54px;
+
+}
+
+.lpart {
+    display: flex;
+    gap: 9.86vw;
+}
+
+.shadowCont {
+    position: absolute;
+    z-index: -1;
+    width: 100vw;
+    margin-top: 14vw; 
+  
+
+    
+}
+
+.shadow {
+    width: 100vw; 
+    overflow: hidden;   
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 64px;
+  height: 64px;
+}
+
+.title {
+  color: var(--ComponentsColor-Color, #1E1E1E);
+text-align: center;
+font-family: "Roboto Mono";
+font-size: 24px;
+font-style: normal;
+font-weight: 500;
+line-height: 150%; /* 36px */
+letter-spacing: -0.264px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 32px;
+  border: 2px solid #12A437;
+  background: url('../../assets/images/avatar-default.png') center/cover no-repeat;
+}

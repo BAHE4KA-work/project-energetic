@@ -1,0 +1,19 @@
+.badge {
+  display: flex;
+  width: 48px;
+  height: 32px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 47px;
+  gap: 10px;
+}
+
+.confirmed {
+  border: 1px solid #50BF70;
+  background: rgba(80, 191, 112, 0.30);
+}
+
+.notConfirmed {
+  border: 1px solid #EE434B;
+  background: rgba(238, 67, 75, 0.30);
+}

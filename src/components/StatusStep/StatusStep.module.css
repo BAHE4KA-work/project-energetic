@@ -1,0 +1,69 @@
+.container {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  align-self: stretch;
+  margin-top: -5px;
+}
+
+.icon img {
+  width: 24px; /* или подходящий размер для иконок */
+  height: 24px;
+}
+
+.content {
+  flex: 1;
+}
+
+.text {
+    display: flex;
+    justify-content: space-between;    
+  font-family: Inter, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.528px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.textPending {
+  color: #5B49ED; /* фиолетовый */
+  text-align: center;
+}
+
+.textConfirmedDone {
+  color: #121212; /* черный */
+  text-align: center;
+}
+
+.time {
+  font-family: Inter, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.456px;
+  color: #121212;
+}
+
+.extraInfo p {
+  margin: 4px 0;
+  font-family: Inter, sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 150%;
+  letter-spacing: -0.304px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.rpart {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+.startIcon {
+    width: 32px;
+    height: 88px;
+}

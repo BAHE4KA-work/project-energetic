@@ -1,0 +1,66 @@
+
+
+.Cont {
+    width: 100%;
+}
+
+.navbar {
+  position: relative; /* для абсолютного позиционирования highlight */
+  display: flex;
+  padding: 3px;
+  align-items: center;
+  gap: 32px;
+  border-radius: 34px;
+background: var(--ComponentsColor-dark-white, #F0F3F4);
+  width: fit-content;
+}
+
+.iconCircle {
+  display: flex;
+  width: 64px;
+  height: 64px;
+  padding: 6px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 32px;
+background: linear-gradient(0deg, rgba(113, 90, 255, 0.20) 0%, rgba(113, 90, 255, 0.20) 100%), #E1E1E1;
+  flex-shrink: 0;
+}
+
+.highlight {
+  position: absolute;
+  top: 3px; /* совпадает с padding.navbar */
+  height: 64px; /* чуть меньше высоты navbar */
+  left: -0.1px;
+  border-radius: 32px;
+  background: #5B49ED;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+
+.tabButton {
+  position: relative;
+  display: flex;
+  padding: 17px 24px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 32px;
+  background: transparent;
+  color: #555;
+    text-align: center;
+    font-family: Roboto;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 150%; /* 30px */
+letter-spacing: -0.22px;
+  border: none;
+  cursor: pointer;
+  gap: 10px;
+  z-index: 1; /* чтобы кнопки были поверх highlight */
+  transition: color 0.3s;
+}
+
+.tabButton.active {
+  color: #E1E1E1;
+}
