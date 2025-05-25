@@ -3,20 +3,20 @@ from sqlalchemy.orm import Session
 
 from app.db.models import Master
 
-def create_master(session: Session, name: str, code: str) -> Master:
+async def create_master(session: Session, name: str, code: str) -> Master:
     master = Master(name=name, code=code)
     session.add(master)
     session.commit()
     session.refresh(master)
     return master
 
-def get_master(session: Session, master_id: int) -> Optional[Master]:
+async def get_master(session: Session, master_id: int) -> Optional[Master]:
     return session.query(Master).filter(Master.id == master_id).first()
 
-def get_all_masters(session: Session) -> List[Type[Master]]:
+async def get_all_masters(session: Session) -> List[Type[Master]]:
     return session.query(Master).all()
 
-def update_master(session: Session, master_id: int, name: Optional[str] = None, code: Optional[str] = None) -> Optional[Type[Master]]:
+async def update_master(session: Session, master_id: int, name: Optional[str] = None, code: Optional[str] = None) -> Optional[Type[Master]]:
     master = session.query(Master).filter(Master.id == master_id).first()
     if not master:
         return None
@@ -28,7 +28,7 @@ def update_master(session: Session, master_id: int, name: Optional[str] = None, 
     session.refresh(master)
     return master
 
-def delete_master(session: Session, master_id: int) -> bool:
+async def delete_master(session: Session, master_id: int) -> bool:
     master = session.query(Master).filter(Master.id == master_id).first()
     if not master:
         return False

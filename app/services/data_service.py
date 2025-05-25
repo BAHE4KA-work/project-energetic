@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.db.models import RawData, AddressCard
 from app.schemas.data import DataInputScheme
 from app.services.check_service import do_plural_check
+from app.services.event_service import create_initial_unassigned
 
 
 async def save_data(data: DataInputScheme, session: Session, do_check: bool = True):
@@ -103,10 +104,12 @@ async def create_card(obj: RawData, session: Session, do_check: bool = True):
     res = None
     if do_check:
         res = await do_plural_check(level, obj)
+    if res:
+        await create_initial_unassigned(card.id, session)
     return card, res
 
 
-def get_cards_by_address_filter(session: Session, city: str | None = None, street: str | None = None):
+async def get_cards_by_address_filter(session: Session, city: str | None = None, street: str | None = None):
     query = session.query(AddressCard)
     if city:
         query = query.filter(AddressCard.address.ilike(f'%{city}%'))
@@ -115,6 +118,6 @@ def get_cards_by_address_filter(session: Session, city: str | None = None, stree
     return query.all()
 
 
-def get_cards_by_risk_level(session: Session, level: int):
+async def get_cards_by_risk_level(session: Session, level: int):
     return session.query(AddressCard).filter(AddressCard.level == str(level)).all()
 
